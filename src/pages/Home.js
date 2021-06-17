@@ -26,7 +26,7 @@ function Home() {
       history.push("/login");
     }
     else {
-      axios.get("http://localhost:3001/posts", {
+      axios.get("https://askit-harun.netlify.app/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfPosts(response.data.listOfPosts.sort((a, b) => b.createdAt - a.createdAt).reverse());
@@ -38,7 +38,7 @@ function Home() {
         setNext(next + 20);
       });
 
-      axios.get("http://localhost:3001/auth").then((response) => {
+      axios.get("https://askit-harun.netlify.app/auth").then((response) => {
         setListOfUsers(response.data)
         console.log(response.data)
       })
@@ -54,7 +54,7 @@ function Home() {
   const likeAPost = (postId) => {
     axios
       .post(
-        "http://localhost:3001/likes",
+        "https://askit-harun.netlify.app/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )

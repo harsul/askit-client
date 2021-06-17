@@ -34,7 +34,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/auth/auth", {
+      .get("https://askit-harun.netlify.app/auth/auth", {
         headers: {
           accessToken: localStorage.getItem("accessToken"),
         },
