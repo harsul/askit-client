@@ -33,7 +33,7 @@ function Post() {
       history.push("/login");
     }
     else {
-      axios.get(`https://blissful-booth-65c569.netlify.app/posts/byId/${id}`).then((response) => {
+      axios.get(`https://askit-harun.netlify.app/posts/byId/${id}`).then((response) => {
         setPostObject(response.data);
 
         setPostText(response.data.postText)
@@ -43,7 +43,7 @@ function Post() {
       });
 
 
-      axios.get(`https://blissful-booth-65c569.netlify.app/comments/${id}`, {
+      axios.get(`https://askit-harun.netlify.app/comments/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfComments(response.data.listOfComments);
@@ -52,7 +52,7 @@ function Post() {
         }))
       });
 
-      axios.get("https://blissful-booth-65c569.netlify.app/posts", {
+      axios.get("https://askit-harun.netlify.app/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfPosts(response.data.listOfPosts.sort((a, b) => b.createdAt - a.createdAt).reverse());
@@ -67,7 +67,7 @@ function Post() {
   const addComment = () => {
     axios
       .post(
-        "https://blissful-booth-65c569.netlify.app/comments",
+        "https://askit-harun.netlify.app/comments",
         {
           commentBody: newComment,
           PostId: id,
@@ -96,7 +96,7 @@ function Post() {
 
     axios
       .post(
-        "https://blissful-booth-65c569.netlify.app/notifications",
+        "https://askit-harun.netlify.app/notifications",
         {
           PostId: id,
           UserId: postUserId,
@@ -119,7 +119,7 @@ function Post() {
 
   const deleteComment = (id) => {
     axios
-      .delete(`https://blissful-booth-65c569.netlify.app/comments/${id}`, {
+      .delete(`https://askit-harun.netlify.app/comments/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -133,7 +133,7 @@ function Post() {
 
   const deletePost = (id) => {
     axios
-      .delete(`https://blissful-booth-65c569.netlify.app/posts/${id}`, {
+      .delete(`https://askit-harun.netlify.app/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -144,7 +144,7 @@ function Post() {
   const likeAComment = (commentId) => {
     axios
       .post(
-        "https://blissful-booth-65c569.netlify.app/commentlikes",
+        "https://askit-harun.netlify.app/commentlikes",
         { CommentId: commentId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -181,7 +181,7 @@ function Post() {
   const likeAPost = (postId) => {
     axios
       .post(
-        "https://blissful-booth-65c569.netlify.app/likes",
+        "https://askit-harun.netlify.app/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -220,7 +220,7 @@ function Post() {
     console.log(postText)
     axios
       .put(
-        "hhttps://blissful-booth-65c569.netlify.app/posts/posttext",
+        "hhttps://askit-harun.netlify.app/posts/posttext",
         {
           id: postObject.id,
           postText: postText
@@ -236,7 +236,7 @@ function Post() {
           alert(response.data.error);
         }
         else {
-          axios.get(`https://blissful-booth-65c569.netlify.app/posts/byId/${id}`).then((response) => {
+          axios.get(`https://askit-harun.netlify.app/posts/byId/${id}`).then((response) => {
             setPostObject(response.data);
           });
           console.log("Suceess")

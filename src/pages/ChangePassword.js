@@ -17,7 +17,7 @@ function ChangePassword() {
     else {
       axios
       .put(
-        "https://blissful-booth-65c569.netlify.app/changepassword",
+        "https://askit-harun.netlify.app/changepassword",
         {
           oldPassword: oldPassword,
           newPassword: newPassword,

@@ -25,7 +25,7 @@ export default function ChangeUsername() {
             history.push("/login");
         }
         else {
-            axios.get(`https://blissful-booth-65c569.netlify.app/auth/basicinfo/${id}`).then((response) => {
+            axios.get(`https://askit-harun.netlify.app/auth/basicinfo/${id}`).then((response) => {
 
                 setName(response.data.name)
                 setSurname(response.data.surname)
@@ -42,7 +42,7 @@ export default function ChangeUsername() {
         console.log(name, surname, username)
         axios
             .put(
-                "https://blissful-booth-65c569.netlify.app/auth/changeusername",
+                "https://askit-harun.netlify.app/auth/changeusername",
                 {
                     name: name,
                     surname: surname,

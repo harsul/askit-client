@@ -22,7 +22,7 @@ export default function Notifications() {
         }
         else {
             console.log(id)
-            axios.get(`https://blissful-booth-65c569.netlify.app/notifications/byuser/${id}`, {
+            axios.get(`https://askit-harun.netlify.app/notifications/byuser/${id}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") },
             }).then((response) => {
                 setListOfNotifications(response.data.sort((a, b) => b.createdAt - a.createdAt).reverse());

@@ -23,7 +23,7 @@ function Registration() {
   });
 
   const onSubmit = (data) => {
-    axios.post("https://blissful-booth-65c569.netlify.app/auth", data).then(() => {
+    axios.post("https://askit-harun.netlify.app/auth", data).then(() => {
       console.log(data);
       history.push("/")
     });

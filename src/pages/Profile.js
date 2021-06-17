@@ -25,17 +25,17 @@ function Profile() {
       history.push("/login");
     }
     else {
-      axios.get(`https://blissful-booth-65c569.netlify.app/auth/basicinfo/${id}`).then((response) => {
+      axios.get(`https://askit-harun.netlify.app/auth/basicinfo/${id}`).then((response) => {
         setUserBasicInfo(response.data);
       });
 
-      axios.get(`https://blissful-booth-65c569.netlify.app/posts/byuserId/${id}`).then((response) => {
+      axios.get(`https://askit-harun.netlify.app/posts/byuserId/${id}`).then((response) => {
         setListOfPosts(response.data.sort((a, b) => b.createdAt - a.createdAt).reverse());
 
         setNext(next + 10)
       });
 
-      axios.get("https://blissful-booth-65c569.netlify.app/posts", {
+      axios.get("https://askit-harun.netlify.app/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setLikedPosts(response.data.likedPosts.map((like) => {
@@ -52,7 +52,7 @@ function Profile() {
 
   const deletePost = (id) => {
     axios
-      .delete(`https://blissful-booth-65c569.netlify.app/posts/${id}`, {
+      .delete(`https://askit-harun.netlify.app/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -67,7 +67,7 @@ function Profile() {
   const likeAPost = (postId) => {
     axios
       .post(
-        "https://blissful-booth-65c569.netlify.app/likes",
+        "https://askit-harun.netlify.app/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )

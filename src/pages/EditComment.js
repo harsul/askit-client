@@ -17,7 +17,7 @@ export default function ChangeUsername() {
     };
 
     useEffect(() => {
-        axios.get(`https://blissful-booth-65c569.netlify.app/comments/byId/${id}`).then((response) => {
+        axios.get(`https://askit-harun.netlify.app/comments/byId/${id}`).then((response) => {
 
             setNewComment(response.data.commentBody)
         });
@@ -28,7 +28,7 @@ export default function ChangeUsername() {
     const onSubmit = (data) => {
         axios
             .put(
-                "https://blissful-booth-65c569.netlify.app/postcomment",
+                "https://askit-harun.netlify.app/postcomment",
                 {
                     newComment: newComment,
                     id: id
