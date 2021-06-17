@@ -26,7 +26,7 @@ function CreatePost() {
   });
 
   const onSubmit = (data) => {
-    axios.post("https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/posts", data,
+    axios.post("https://blissful-booth-65c569.netlify.app/posts", data,
       { headers: { accessToken: localStorage.getItem("accessToken") } }).then((response) => {
         history.push("/");
       });

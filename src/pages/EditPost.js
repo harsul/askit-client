@@ -17,7 +17,7 @@ export default function ChangeUsername() {
     };
 
     useEffect(() => {
-        axios.get(`https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/posts/byId/${id}`).then((response) => {
+        axios.get(`https://blissful-booth-65c569.netlify.app/posts/byId/${id}`).then((response) => {
 
             setNewText(response.data.postText)
 
@@ -29,7 +29,7 @@ export default function ChangeUsername() {
     const onSubmit = (data) => {
         axios
             .put(
-                "https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/posts/posttext",
+                "https://blissful-booth-65c569.netlify.app/posts/posttext",
                 {
                     postText: newText,
                     id: id

@@ -23,7 +23,7 @@ function Registration() {
   });
 
   const onSubmit = (data) => {
-    axios.post("https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/auth", data).then(() => {
+    axios.post("https://blissful-booth-65c569.netlify.app/auth", data).then(() => {
       console.log(data);
       history.push("/")
     });

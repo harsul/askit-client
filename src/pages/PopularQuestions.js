@@ -24,7 +24,7 @@ function Home() {
       history.push("/login");
     }
     else {
-      axios.get("https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/posts", {
+      axios.get("https://blissful-booth-65c569.netlify.app/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfPosts(response.data.listOfPosts.sort((a, b) => b.createdAt - a.createdAt).reverse());
@@ -45,7 +45,7 @@ function Home() {
   const likeAPost = (postId) => {
     axios
       .post(
-        "https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/likes",
+        "https://blissful-booth-65c569.netlify.app/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -80,7 +80,7 @@ function Home() {
 
   const deletePost = (id) => {
     axios
-      .delete(`https://60cb2bcae4e036c472137ea9--blissful-booth-65c569.netlify.app/posts/${id}`, {
+      .delete(`https://blissful-booth-65c569.netlify.app/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
