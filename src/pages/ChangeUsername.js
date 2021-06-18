@@ -38,65 +38,112 @@ export default function ChangeUsername() {
 
 
     const handleOnSubmit = (data) => {
-        axios
-            .put(
-                process.env.REACT_APP_HTTP_API + "/auth/changeusername",
-                {
-                    id: id,
-                    name: name,
-                    surname: surname,
-                    username: username
+        const promises = [
+            axios.put(process.env.REACT_APP_HTTP_API + "/auth/changeusername", {
+                id: id,
+                name: name,
+                surname: surname,
+                username: username
+            }, {
+                headers: {
+                    accessToken: localStorage.getItem("accessToken"),
                 },
-                {
-                    headers: {
-                        accessToken: localStorage.getItem("accessToken"),
-                    },
+            }),
+            axios.put(process.env.REACT_APP_HTTP_API + "/posts/username", {
+                username: username,
+                id: id
+            }, {
+                headers: {
+                    accessToken: localStorage.getItem("accessToken"),
+                },
+            }),
+            axios.put(process.env.REACT_APP_HTTP_API + "/notifications/username", {
+                username: username,
+                id: id
+            }, {
+                headers: {
+                    accessToken: localStorage.getItem("accessToken"),
+                },
+            })
+        ];
+
+        Promise.all(promises).then((responses) => {
+            const errors = responses.map((response) => {
+                if (response?.data?.error) {
+                    return response.data.error;
                 }
-            )
-            .then((response) => {
-                if (response.data.error) {
-                    alert(response.data.error);
-                }
+
+                return null
             });
 
-        axios
-            .put(
-                process.env.REACT_APP_HTTP_API + "/posts/username",
-                {
-                    username: username,
-                    id: id
-                },
-                {
-                    headers: {
-                        accessToken: localStorage.getItem("accessToken"),
-                    },
-                }
-            )
-            .then((response) => {
-                if (response.data.error) {
-                    alert(response.data.error);
-                }
-            });
+            if (errors.find(Boolean)) {
+                alert(errors.join('\n'))
+            } else {
+                history.goBack()
+            }
+        })
 
-        axios
-            .put(
-                process.env.REACT_APP_HTTP_API + "/notifications/username",
-                {
-                    username: username,
-                    id: id
-                },
-                {
-                    headers: {
-                        accessToken: localStorage.getItem("accessToken"),
-                    },
-                }
-            )
-            .then((response) => {
-                if (response.data.error) {
-                    alert(response.data.error);
-                }
-            });
-        history.goBack()
+        // axios
+        //     .put(
+        //         process.env.REACT_APP_HTTP_API + "/auth/changeusername",
+        //         {
+        //             id: id,
+        //             name: name,
+        //             surname: surname,
+        //             username: username
+        //         },
+        //         {
+        //             headers: {
+        //                 accessToken: localStorage.getItem("accessToken"),
+        //             },
+        //         }
+        //     )
+        //     .then((response) => {
+        //         if (response.data.error) {
+        //             alert(response.data.error);
+        //         }
+        //     });
+
+        // axios
+        //     .put(
+        //         process.env.REACT_APP_HTTP_API + "/posts/username",
+        //         {
+        //             username: username,
+        //             id: id
+        //         },
+        //         {
+        //             headers: {
+        //                 accessToken: localStorage.getItem("accessToken"),
+        //             },
+        //         }
+        //     )
+        //     .then((response) => {
+        //         if (response.data.error) {
+        //             alert(response.data.error);
+        //         }
+        //     });
+
+        // axios
+        //     .put(
+        //         process.env.REACT_APP_HTTP_API + "/notifications/username",
+        //         {
+        //             username: username,
+        //             id: id
+        //         },
+        //         {
+        //             headers: {
+        //                 accessToken: localStorage.getItem("accessToken"),
+        //             },
+        //         }
+        //     )
+        //     .then((response) => {
+        //         if (response.data.error) {
+        //             alert(response.data.error);
+        //         }
+
+        //     });
+
+
     };
     return (
         <div>
