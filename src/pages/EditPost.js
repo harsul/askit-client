@@ -17,7 +17,7 @@ export default function ChangeUsername() {
     };
 
     useEffect(() => {
-        axios.get(`https://askit-harun.netlify.app/posts/byId/${id}`).then((response) => {
+        axios.get(`http://localhost:3001/posts/byId/${id}`).then((response) => {
 
             setNewText(response.data.postText)
 
@@ -26,10 +26,10 @@ export default function ChangeUsername() {
     }, []);
 
 
-    const onSubmit = (data) => {
+    const handleOnSubmit = (data) => {
         axios
             .put(
-                "https://askit-harun.netlify.app/posts/posttext",
+                process.env.REACT_APP_HTTP_API + "/posts/posttext",
                 {
                     postText: newText,
                     id: id
@@ -58,7 +58,7 @@ export default function ChangeUsername() {
                     <Col xs={6}>
                         <Formik
                             initialValues={initialValues}
-                            onSubmit={onSubmit}
+                            onSubmit={handleOnSubmit}
                         >
                             <Form>
                                 <div className="form-group">

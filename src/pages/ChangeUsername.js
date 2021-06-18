@@ -25,7 +25,7 @@ export default function ChangeUsername() {
             history.push("/login");
         }
         else {
-            axios.get(`https://askit-harun.netlify.app/auth/basicinfo/${id}`).then((response) => {
+            axios.get(`http://localhost:3001/auth/basicinfo/${id}`).then((response) => {
 
                 setName(response.data.name)
                 setSurname(response.data.surname)
@@ -33,17 +33,16 @@ export default function ChangeUsername() {
             });
 
         }
-
         // eslint-disable-next-line
     }, []);
 
 
-    const onSubmit = (data) => {
-        console.log(name, surname, username)
+    const handleOnSubmit = (data) => {
         axios
             .put(
-                "https://askit-harun.netlify.app/auth/changeusername",
+                process.env.REACT_APP_HTTP_API + "/auth/changeusername",
                 {
+                    id: id,
                     name: name,
                     surname: surname,
                     username: username
@@ -58,10 +57,46 @@ export default function ChangeUsername() {
                 if (response.data.error) {
                     alert(response.data.error);
                 }
-                else {
-                    history.goBack()
+            });
+
+        axios
+            .put(
+                process.env.REACT_APP_HTTP_API + "/posts/username",
+                {
+                    username: username,
+                    id: id
+                },
+                {
+                    headers: {
+                        accessToken: localStorage.getItem("accessToken"),
+                    },
+                }
+            )
+            .then((response) => {
+                if (response.data.error) {
+                    alert(response.data.error);
                 }
             });
+
+        axios
+            .put(
+                process.env.REACT_APP_HTTP_API + "/notifications/username",
+                {
+                    username: username,
+                    id: id
+                },
+                {
+                    headers: {
+                        accessToken: localStorage.getItem("accessToken"),
+                    },
+                }
+            )
+            .then((response) => {
+                if (response.data.error) {
+                    alert(response.data.error);
+                }
+            });
+        history.goBack()
     };
     return (
         <div>
@@ -72,7 +107,7 @@ export default function ChangeUsername() {
                     <Col xs={4}>
                         <Formik
                             initialValues={initialValues}
-                            onSubmit={onSubmit}>
+                            onSubmit={handleOnSubmit}>
                             <Form>
                                 <div className="form-group">
                                     <label htmlFor="name">Name</label>
@@ -119,7 +154,6 @@ export default function ChangeUsername() {
                     <Col></Col>
                 </Row>
             </Container>
-
         </div>
     )
 }

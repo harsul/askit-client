@@ -25,17 +25,16 @@ function Profile() {
       history.push("/login");
     }
     else {
-      axios.get(`https://askit-harun.netlify.app/auth/basicinfo/${id}`).then((response) => {
+      axios.get(`http://localhost:3001/auth/basicinfo/${id}`).then((response) => {
         setUserBasicInfo(response.data);
       });
 
-      axios.get(`https://askit-harun.netlify.app/posts/byuserId/${id}`).then((response) => {
+      axios.get(`http://localhost:3001/posts/byuserId/${id}`).then((response) => {
         setListOfPosts(response.data.sort((a, b) => b.createdAt - a.createdAt).reverse());
-
         setNext(next + 10)
       });
 
-      axios.get("https://askit-harun.netlify.app/posts", {
+      axios.get(process.env.REACT_APP_HTTP_API + "/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setLikedPosts(response.data.likedPosts.map((like) => {
@@ -50,9 +49,9 @@ function Profile() {
     setNext(next + 10);
   };
 
-  const deletePost = (id) => {
+  const handleDeletePost = (id) => {
     axios
-      .delete(`https://askit-harun.netlify.app/posts/${id}`, {
+      .delete(`http://localhost:3001/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -64,10 +63,10 @@ function Profile() {
       });
   };
 
-  const likeAPost = (postId) => {
+  const handleLikeAPost = (postId) => {
     axios
       .post(
-        "https://askit-harun.netlify.app/likes",
+        process.env.REACT_APP_HTTP_API + "/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -105,7 +104,7 @@ function Profile() {
       <Jumbotron>
         <Container className="text-center">
           <h1>{userBasicInfo.name} {userBasicInfo.surname}</h1>
-          <h2>{authState.username}</h2>
+          <h2>{userBasicInfo.username}</h2>
           <p>
             This is a place for user information about profile
           </p>
@@ -123,11 +122,11 @@ function Profile() {
                     <br></br>
                     <cite title="Source Title"><Moment fromNow>{value.createdAt}</Moment>  </cite>
                     <cite className="float-right">
-                      {authState.username === value.username && (
+                      {authState.id === value.UserId && (
                         <DropdownButton size="sm" id="dropdown-basic-button" title="Options">
                           <Dropdown.Item href={`/editpost/${value.id}`}>Edit</Dropdown.Item>
                           <Dropdown.Item onClick={() => {
-                            deletePost(value.id);
+                            handleDeletePost(value.id);
                           }}>Delete</Dropdown.Item>
                         </DropdownButton>
                       )}
@@ -144,7 +143,7 @@ function Profile() {
                     <label className="mr-2 ml-2"> {value.Likes.length}</label>
                     <FavoriteIcon
                       onClick={() => {
-                        likeAPost(value.id);
+                        handleLikeAPost(value.id);
                       }}
                       className={
                         likedPosts.includes(value.id) ? "unlikeBttn" : "likeBttn"

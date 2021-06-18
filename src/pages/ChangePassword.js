@@ -10,14 +10,14 @@ function ChangePassword() {
 
   let history = useHistory()
 
-  const changePassword = () => {
+  const handleChangePassword = () => {
     if (!localStorage.getItem("accessToken")) {
       history.push("/login");
     }
     else {
       axios
       .put(
-        "https://askit-harun.netlify.app/changepassword",
+        process.env.REACT_APP_HTTP_API + "/auth/changepassword",
         {
           oldPassword: oldPassword,
           newPassword: newPassword,
@@ -57,13 +57,15 @@ function ChangePassword() {
             </Form.Group>
             <Form.Group controlId="newPassword">
               <Form.Label>New Password</Form.Label>
+              <br />
+              {newPassword.length<5 && <span>New password must be greater than 5 characters</span>}
               <Form.Control type="password" placeholder="New Password"
                 onChange={(event) => {
                   setNewPassword(event.target.value);
                 }} />
             </Form.Group>
             <Form.Group controlId="formBasicSubmit" className="text-center">
-              <Button onClick={changePassword}> Save Changes</Button>
+              <Button onClick={handleChangePassword} disabled={newPassword.length<5}> Save Changes</Button>
             </Form.Group>
           </Form>
         </Col>

@@ -24,7 +24,7 @@ function Home() {
       history.push("/login");
     }
     else {
-      axios.get("https://askit-harun.netlify.app/posts", {
+      axios.get(process.env.REACT_APP_HTTP_API + "/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfPosts(response.data.listOfPosts.sort((a, b) => b.createdAt - a.createdAt).reverse());
@@ -42,10 +42,10 @@ function Home() {
     setNext(next + 10);
   };
 
-  const likeAPost = (postId) => {
+  const handleLikeAPost = (postId) => {
     axios
       .post(
-        "https://askit-harun.netlify.app/likes",
+        process.env.REACT_APP_HTTP_API + "/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -78,9 +78,9 @@ function Home() {
       });
   };
 
-  const deletePost = (id) => {
+  const handleDeletePost = (id) => {
     axios
-      .delete(`https://askit-harun.netlify.app/posts/${id}`, {
+      .delete(`http://localhost:3001/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -106,11 +106,11 @@ function Home() {
                   <cite title="Source Title"><Moment fromNow>{value.updatedAt}</Moment>
                   </cite>
                   <cite className="float-right">
-                  {authState.username === value.username && (
+                  {authState.id === value.UserId && (
                         <DropdownButton size="sm" id="dropdown-basic-button" title="Options">
                           <Dropdown.Item href={`/editpost/${value.id}`}>Edit</Dropdown.Item>
                           <Dropdown.Item onClick={() => {
-                            deletePost(value.id);
+                            handleDeletePost(value.id);
                           }}>Delete</Dropdown.Item>
                         </DropdownButton>
                       )}
@@ -127,7 +127,7 @@ function Home() {
                   <label className="ml-2 mr-2"> {value.Likes.length}</label>
                   <FavoriteIcon 
                         onClick={() => {
-                          likeAPost(value.id);
+                          handleLikeAPost(value.id);
                         }}
                         className={
                           likedPosts.includes(value.id) ? "unlikeBttn" : "likeBttn"

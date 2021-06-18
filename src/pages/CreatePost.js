@@ -25,8 +25,8 @@ function CreatePost() {
     postText: Yup.string().required("You must input a Question!"),
   });
 
-  const onSubmit = (data) => {
-    axios.post("https://askit-harun.netlify.app/posts", data,
+  const handleOnSubmit = (data) => {
+    axios.post(process.env.REACT_APP_HTTP_API + "/posts", data,
       { headers: { accessToken: localStorage.getItem("accessToken") } }).then((response) => {
         history.push("/");
       });
@@ -40,7 +40,7 @@ function CreatePost() {
         <Col xs={8}>
           <Formik
             initialValues={initialValues}
-            onSubmit={onSubmit}
+            onSubmit={handleOnSubmit}
             validationSchema={validationSchema}>
             <Form>
               <div className="form-group">

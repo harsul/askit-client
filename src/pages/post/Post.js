@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory, Link } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../helpers/AuthContext";
 import Moment from 'react-moment';
-
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Card, Container, Row, Col, Button, Form, Modal, DropdownButton, Dropdown } from "react-bootstrap"
+
+
+import { AuthContext } from "../../helpers/AuthContext";
+import Comment from "./Comment";
 
 function Post() {
   let { id } = useParams();
@@ -33,7 +35,7 @@ function Post() {
       history.push("/login");
     }
     else {
-      axios.get(`https://askit-harun.netlify.app/posts/byId/${id}`).then((response) => {
+      axios.get(`http://localhost:3001/posts/byId/${id}`).then((response) => {
         setPostObject(response.data);
 
         setPostText(response.data.postText)
@@ -42,17 +44,9 @@ function Post() {
         setLikeNum(response.data.Likes.length)
       });
 
+      getPostComment()
 
-      axios.get(`https://askit-harun.netlify.app/comments/${id}`, {
-        headers: { accessToken: localStorage.getItem("accessToken") },
-      }).then((response) => {
-        setListOfComments(response.data.listOfComments);
-        setLikedComments(response.data.likedComments.map((like) => {
-          return like.CommentId
-        }))
-      });
-
-      axios.get("https://askit-harun.netlify.app/posts", {
+      axios.get(process.env.REACT_APP_HTTP_API + "/posts", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfPosts(response.data.listOfPosts.sort((a, b) => b.createdAt - a.createdAt).reverse());
@@ -64,10 +58,21 @@ function Post() {
     // eslint-disable-next-line
   }, []);
 
-  const addComment = () => {
+  const getPostComment = () => {
+    axios.get(`http://localhost:3001/comments/${id}`, {
+      headers: { accessToken: localStorage.getItem("accessToken") },
+    }).then((response) => {
+      setListOfComments(response.data.listOfComments);
+      setLikedComments(response.data.likedComments.map((like) => {
+        return like.CommentId
+      }))
+    });
+  }
+
+  const handleAddComment = () => {
     axios
       .post(
-        "https://askit-harun.netlify.app/comments",
+        process.env.REACT_APP_HTTP_API + "/comments",
         {
           commentBody: newComment,
           PostId: id,
@@ -83,20 +88,14 @@ function Post() {
         if (response.data.error) {
           console.log(response.data.error);
         } else {
-          const commentToAdd = {
-            commentBody: newComment,
-            username: response.data.username,
-            userId: response.data.id
-          };
-          setListOfComments([...listOfComments, commentToAdd]);
+          getPostComment();
           setNewComment("");
-          window.location.reload();
         }
       });
 
     axios
       .post(
-        "https://askit-harun.netlify.app/notifications",
+        process.env.REACT_APP_HTTP_API + "/notifications",
         {
           PostId: id,
           UserId: postUserId,
@@ -117,23 +116,9 @@ function Post() {
       });
   };
 
-  const deleteComment = (id) => {
+  const handleDeletePost = (id) => {
     axios
-      .delete(`https://askit-harun.netlify.app/comments/${id}`, {
-        headers: { accessToken: localStorage.getItem("accessToken") },
-      })
-      .then(() => {
-        setListOfComments(
-          listOfComments.filter((val) => {
-            return val.id !== id;
-          })
-        );
-      });
-  };
-
-  const deletePost = (id) => {
-    axios
-      .delete(`https://askit-harun.netlify.app/posts/${id}`, {
+      .delete(`http://localhost:3001/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -141,47 +126,10 @@ function Post() {
       });
   };
 
-  const likeAComment = (commentId) => {
-    axios
-      .post(
-        "https://askit-harun.netlify.app/commentlikes",
-        { CommentId: commentId },
-        { headers: { accessToken: localStorage.getItem("accessToken") } }
-      )
-      .then((response) => {
-        setListOfComments(
-          listOfComments.map((comment) => {
-            if (comment.id === commentId) {
-              if (response.data.liked) {
-                return { ...comment, CommentLikes: [...comment.CommentLikes, 0] };
-              } else {
-                const likesArray = comment.CommentLikes;
-                likesArray.pop();
-                return { ...comment, CommentLikes: likesArray };
-              }
-            } else {
-              return comment;
-            }
-          })
-        );
-
-        if (likedComments.includes(commentId)) {
-          setLikedComments(
-            likedComments.filter((id) => {
-              return id !== commentId;
-            })
-          );
-        } else {
-          setLikedComments([...likedComments, commentId]);
-        }
-      });
-  };
-
-
   const likeAPost = (postId) => {
     axios
       .post(
-        "https://askit-harun.netlify.app/likes",
+        process.env.REACT_APP_HTTP_API + "/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -216,17 +164,17 @@ function Post() {
       });
   };
 
-  const editpost = (data) => {
-    console.log(postText)
+  const handleEditpost = (data) => {
     axios
       .put(
-        "hhttps://askit-harun.netlify.app/posts/posttext",
+        process.env.REACT_APP_HTTP_API + "/posts/posttext",
         {
           id: postObject.id,
           postText: postText
         },
         {
           headers: {
+            "Access-Control-Allow-Origin": "*",
             accessToken: localStorage.getItem("accessToken"),
           },
         }
@@ -236,7 +184,7 @@ function Post() {
           alert(response.data.error);
         }
         else {
-          axios.get(`https://askit-harun.netlify.app/posts/byId/${id}`).then((response) => {
+          axios.get(`http://localhost:3001/posts/byId/${id}`).then((response) => {
             setPostObject(response.data);
           });
           console.log("Suceess")
@@ -254,13 +202,13 @@ function Post() {
               <Card.Header >
                 <Link to={`/profile/${postObject.UserId}`}> {postObject.username}</Link>
                 <br></br>
-                <cite title="Source Title"><Moment fromNow>{postObject.updatedAt}</Moment>  </cite>
+                <cite title="Source Title"><Moment fromNow>{postObject.createdAt}</Moment>  </cite>
                 <cite className="float-right">
-                  {authState.username === postObject.username && (
+                  {authState.id === postObject.UserId && (
                     <DropdownButton size="sm" id="dropdown-basic-button" title="Options">
                       <Dropdown.Item onClick={handleShow}>Edit</Dropdown.Item>
                       <Dropdown.Item onClick={() => {
-                        deletePost(postObject.id);
+                        handleDeletePost(postObject.id);
                       }}>Delete</Dropdown.Item>
                     </DropdownButton>
                   )}
@@ -283,16 +231,15 @@ function Post() {
                     likedPosts.includes(postObject.id) ? "unlikeBttn" : "likeBttn"
                   }
                 />
-
               </Card.Footer>
             </Card>
           </Col>
-
         </Row>
+        <hr />
         <Row>
           <Col xs={2}></Col>
           <Col>
-            <Form>
+            <Form onSubmit={(event) => event.preventDefault()}>
               <Form.Group controlId="formBasicComment">
                 <Form.Label>Comment</Form.Label>
                 <Form.Control type="text" placeholder="Enter comment"
@@ -303,51 +250,19 @@ function Post() {
                 />
               </Form.Group>
               <Form.Group controlId="formBasicSubmit">
-                <Button onClick={addComment}> Add Comment</Button>
+                <Button onClick={handleAddComment}> Add Comment</Button>
               </Form.Group>
             </Form>
-            <hr></hr>
-            {listOfComments.map((comment, key) => {
-              return (
-                <Card key={key} className="mb-3">
-                  <Card.Header >
-                    <cite title="Source Title"><Link to={`/profile/${comment.UserId}`}>{comment.username}</Link>
-                    </cite>
-                    <br></br>
-                    <cite><Moment fromNow>{comment.createdAt}</Moment></cite>
-                    <cite className="float-right">
-                      {authState.username === comment.username && (
-                        <DropdownButton size="sm" id="dropdown-basic-button" title="Options">
-                          <Dropdown.Item href={`/editcomment/${comment.id}`}>Edit</Dropdown.Item>
-                          <Dropdown.Item onClick={() => {
-                            deleteComment(comment.id);
-                          }}>Delete</Dropdown.Item>
-                        </DropdownButton>
-                      )}
-                    </cite>
-                  </Card.Header>
-                  <Card.Body>
-                    <blockquote className="blockquote mb-0">
-                      <p>
-                        {comment.commentBody}
-                      </p>
-                    </blockquote>
-                  </Card.Body>
-                  <Card.Footer className="text-muted">
-                    {typeof comment.CommentLikes != "undefined" ? <label className="ml-2 mr-2">{comment.CommentLikes.length}</label> : "0"}
-                    <FavoriteIcon
-                      onClick={() => {
-                        likeAComment(comment.id);
-                      }}
-                      className={
-                        likedComments.includes(comment.id) ? "unlikeBttn" : "likeBttn"
-                      }
-                    />
-                  </Card.Footer>
-                </Card>
-              );
-
-            })}
+            <hr />
+            {listOfComments.map((comment, key) => (
+              <Comment
+                key={key}
+                comment={comment}
+                authState={authState}
+                isLiked={likedComments.includes(comment.id)}
+                refresh={getPostComment}
+              />
+            ))}
           </Col>
         </Row>
 
@@ -374,7 +289,7 @@ function Post() {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={editpost}>
+            <Button variant="primary" onClick={handleEditpost}>
               Save Changes
             </Button>
           </Modal.Footer>
