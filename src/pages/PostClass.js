@@ -6,13 +6,13 @@ import { useState } from "react";
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Formik, Form, Field } from "formik";
 
-export default function Comment({ comment, authState, isLiked, refresh }) {
+export default function PostClass({ post, authState, isLiked, refresh }) {
     const [isEdit, setIsEdit] = useState(false);
-    const [commentBody, setCommentBody] = useState(comment.commentBody);
+    const [postText, setPostText] = useState(post.postText);
 
-    const handleDeleteComment = () => {
+    const handleDeletePost = () => {
         axios
-            .delete(`${process.env.REACT_APP_HTTP_API}/comments/${comment.id}`, {
+            .delete(`${process.env.REACT_APP_HTTP_API}/posts/${post.id}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") },
             })
             .then(() => {
@@ -20,25 +20,28 @@ export default function Comment({ comment, authState, isLiked, refresh }) {
             });
     };
 
-    const handleLikeAComment = () => {
+    const handleLikeAPost = () => {
         axios
             .post(
-                process.env.REACT_APP_HTTP_API + "/commentlikes",
-                { CommentId: comment.id },
+                process.env.REACT_APP_HTTP_API + "/likes",
+                { PostId: post.id },
                 { headers: { accessToken: localStorage.getItem("accessToken") } }
             )
-            .then(() => {
+            .then((response) => {
                 refresh()
-            });
+            })
     };
 
     const handleSubmit = () => {
+
+        console.log(isLiked)
+
         axios
             .put(
-                process.env.REACT_APP_HTTP_API + "/comments/postcomment",
+                process.env.REACT_APP_HTTP_API + "/posts/posttext",
                 {
-                    newComment: commentBody,
-                    id: comment.id
+                    postText: postText,
+                    id: post.id
                 },
                 {
                     headers: {
@@ -47,8 +50,13 @@ export default function Comment({ comment, authState, isLiked, refresh }) {
                 }
             )
             .then((response) => {
-                refresh()
-                setIsEdit(false)
+                if (response.data.error) {
+                    alert(response.data.error);
+                }
+                else {
+                    refresh()
+                    setIsEdit(false)
+                }
             });
     };
 
@@ -56,15 +64,15 @@ export default function Comment({ comment, authState, isLiked, refresh }) {
         <Card className="mb-3">
             <Card.Header >
                 <cite title="Source Title">
-                    <Link to={`/profile/${comment.UserId}`}>{comment.username}</Link>
+                    <Link to={`/profile/${post.UserId}`}>{post.username}</Link>
                 </cite>
                 <br></br>
-                <cite><Moment fromNow>{comment.createdAt}</Moment></cite>
+                <cite><Moment fromNow>{post.createdAt}</Moment></cite>
                 <cite className="float-right">
-                    {authState.id === comment.UserId && (
+                    {authState.id === post.UserId && (
                         <DropdownButton size="sm" id="dropdown-basic-button" title="Options">
                             <Dropdown.Item onClick={() => setIsEdit(true)}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={handleDeleteComment}>Delete</Dropdown.Item>
+                            <Dropdown.Item onClick={handleDeletePost}>Delete</Dropdown.Item>
                         </DropdownButton>
                     )}
                 </cite>
@@ -82,27 +90,29 @@ export default function Comment({ comment, authState, isLiked, refresh }) {
                                     rows={3}
                                     className="form-control"
                                     id="inputName"
-                                    name="newcomment"
-                                    placeholder="Enter name..."
-                                    value={commentBody}
-                                    onChange={(e) => setCommentBody(e.target.value)} />
+                                    name="postText"
+                                    placeholder="Enter question..."
+                                    value={postText}
+                                    onChange={(e) => setPostText(e.target.value)} />
                                 <div className="form-group text-center">
                                     <br />
-                                    <Button size="sm" type="submit" variant="primary" disabled={!commentBody.length}>Update</Button>
+                                    <Button size="sm" type="submit" className="btn btn-primary" disabled={!postText.length}>Update</Button>
                                 </div>
                             </Form>
                         </Formik>
                     ) : (
                         <blockquote className="blockquote mb-0">
                             <p>
-                                {comment.commentBody}
+                                {post.postText}
                             </p>
                         </blockquote>
                     )}
             </Card.Body>
+
             <Card.Footer className="text-muted">
-                <label className="ml-2 mr-2">{comment.CommentLikes.length}</label>
-                <FavoriteIcon onClick={handleLikeAComment} className={isLiked ? "unlikeBttn" : "likeBttn"} />
+                <label className="ml-2 mr-2">{post.Likes.length}</label>
+                <FavoriteIcon onClick={handleLikeAPost} className={isLiked ? "unlikeBttn" : "likeBttn"} />
+                <Link className="float-right" to={`/post/${post.id}`}>Read Comments</Link>
             </Card.Footer>
         </Card>
     )
