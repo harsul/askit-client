@@ -31,7 +31,6 @@ function Home() {
         headers: { accessToken: localStorage.getItem("accessToken") },
       }).then((response) => {
         setListOfUsers(response.data)
-        console.log(response.data)
       })
     }
     // eslint-disable-next-line
